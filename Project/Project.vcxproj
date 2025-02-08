@@ -130,7 +130,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Errors.h" />
+    <ClInclude Include="Errors.hpp" />
     <ClInclude Include="TypePunning.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

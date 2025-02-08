@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ERRORS_HPP__
+#define __ERRORS_HPP__
 
 //Static assertion custom implementation
 #define _ASSERT_GLUE(a, b) a ## b
@@ -21,8 +22,5 @@
 	#endif
 #endif
 
-class Errors
-{
-	//not requried yet
-};
+#endif //__ERRORS_HPP__
 
