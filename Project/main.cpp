@@ -22,24 +22,29 @@ void task(int i)
 
 int main()
 {
-	InitializeCriticalSection(&critSec);
+#pragma region threads
+	{
+		InitializeCriticalSection(&critSec);
+		std::thread t[3];
+		for (int i = 0; i < 3; i++)
+		{
+			t[i] = std::thread(task, i);
+		}
 
+		for (int i = 0; i < 3; i++)
+		{
+			t[i].join();
+		}
+		DeleteCriticalSection(&critSec);
+	}
+#pragma endregion
+
+#pragma region asserts_swap
 	STATIC_ASSERT(sizeof(int) == 4);
 	std::int32_t x = 128;
 	printf("0x%08x\n", x);
 	x = swapF32(x);
 	printf("0x%08x\n", x);
+#pragma endregion
 
-	std::thread t[3];
-	for (int i = 0; i < 3; i++)
-	{
-		t[i] = std::thread(task, i);
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		t[i].join();
-	}
-
-	DeleteCriticalSection(&critSec);
 }
