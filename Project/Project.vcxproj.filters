@@ -26,11 +26,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Errors.hpp">
+    <ClInclude Include="Test\Errors.hpp">
       <Filter>Pliki nagłówkowe\Testing</Filter>
     </ClInclude>
-    <ClInclude Include="TypePunning.hpp">
+    <ClInclude Include="Test\TypePunning.hpp">
       <Filter>Pliki nagłówkowe\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="Concurrency\SpinLock.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

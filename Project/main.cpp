@@ -2,8 +2,9 @@
 #include <cstdint>
 #include <thread>
 #include <Windows.h>
-#include "Errors.hpp"
-#include "TypePunning.hpp"
+#include "Test/Errors.hpp"
+#include "Test/TypePunning.hpp"
+#include "Concurrency/SpinLock.hpp"
 
 
 static int a = 10;
@@ -45,6 +46,12 @@ int main()
 	printf("0x%08x\n", x);
 	x = swapF32(x);
 	printf("0x%08x\n", x);
+#pragma endregion
+
+
+#pragma region concurrency
+	TestLocks();
+
 #pragma endregion
 
 }
