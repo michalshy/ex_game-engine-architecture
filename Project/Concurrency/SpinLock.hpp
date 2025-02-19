@@ -117,6 +117,41 @@ public:
 	}
 };
 
+class UnnecessaryLock {
+	volatile bool m_locked;
+public:
+	void Acquire()
+	{
+		///assert lock is free
+		assert(!m_locked);
+		//now lock
+		/*
+			OPERATIONS
+		*/
+		m_locked = true;
+	}
+	void Release()
+	{
+		//assert correct usage
+		assert(m_locked);
+		m_locked = false;
+	}
+};
+
+class UnnecessaryLockJanitor {
+	UnnecessaryLock* m_pLock;
+public:
+	explicit UnnecessaryLockJanitor(UnnecessaryLock& lock) :
+		m_pLock(&lock)
+	{
+		m_pLock->Acquire();
+	}
+	~UnnecessaryLockJanitor()
+	{
+		m_pLock->Release();
+	}
+};
+
 SpinLock g_lock;
 
 void TestLocks()
@@ -134,6 +169,24 @@ void TestLocks()
 	*/
 	//otherwise here
 	return;
+}
+
+#if ASSERTIONS_ENABLED
+#define BEGIN_ASSERT_LOCK_NOT_NECESSARY(L)
+(L).Acquire()
+#define END_ASSERT_LOCK_NOT_NECESSARY(L)
+(L).Release()
+#else
+#define BEGIN_ASSERT_LOCK_NOT_NECESSARY(L)
+#define END_ASSERT_LOCK_NOT_NECESSARY(L)
+#endif
+
+UnnecessaryLock lock;
+void TestUL()
+{
+	BEGIN_ASSERT_LOCK_NOT_NECESSARY(lock);
+	printf("perform some operation");
+	END_ASSERT_LOCK_NOT_NECESSARY(lock);
 }
 
 
