@@ -6,6 +6,7 @@
 #include "Test/TypePunning.hpp"
 #include "Concurrency/SpinLock.hpp"
 #include "Concurrency/List.hpp"
+#include "SIMD/Simd.hpp"
 
 static int a = 10;
 static CRITICAL_SECTION  critSec;
@@ -39,7 +40,6 @@ int main()
 		DeleteCriticalSection(&critSec);
 	}
 #pragma endregion
-
 #pragma region asserts_swap
 	STATIC_ASSERT(sizeof(int) == 4);
 	std::int32_t x = 128;
@@ -47,12 +47,13 @@ int main()
 	x = swapF32(x);
 	printf("0x%08x\n", x);
 #pragma endregion
-
-
 #pragma region concurrency
 	TestLocks();
 	TestUL();
 
+#pragma endregion
+#pragma region SIMD
+	TestAddSSE();
 #pragma endregion
 
 }
