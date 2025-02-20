@@ -5,7 +5,7 @@
 #include "Test/Errors.hpp"
 #include "Test/TypePunning.hpp"
 #include "Concurrency/SpinLock.hpp"
-
+#include "Concurrency/List.hpp"
 
 static int a = 10;
 static CRITICAL_SECTION  critSec;
@@ -51,6 +51,7 @@ int main()
 
 #pragma region concurrency
 	TestLocks();
+	TestUL();
 
 #pragma endregion
 

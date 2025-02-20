@@ -134,6 +134,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Concurrency\List.hpp" />
     <ClInclude Include="Concurrency\SpinLock.hpp" />
     <ClInclude Include="Test\Errors.hpp" />
     <ClInclude Include="Test\TypePunning.hpp" />

@@ -35,5 +35,8 @@
     <ClInclude Include="Concurrency\SpinLock.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Concurrency\List.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
