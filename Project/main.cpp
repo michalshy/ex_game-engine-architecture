@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <cstdint>
 #include <thread>
@@ -7,7 +8,10 @@
 #include "Concurrency/SpinLock.hpp"
 #include "Concurrency/List.hpp"
 #include "SIMD/Simd.hpp"
+#include <chrono>
 
+#undef max()
+#include <limits>
 static int a = 10;
 static CRITICAL_SECTION  critSec;
 
@@ -54,6 +58,44 @@ int main()
 #pragma endregion
 #pragma region SIMD
 	TestAddSSE();
+	//Test vectorized loop
+	//int count = 40240 * 40240;
+	int count = 5192 * 5192;
+	float* results = new float[count];
+	float* dataA = new float[count];
+	float* dataB = new float[count];
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	NoSSELoop(count, results, dataA, dataB);
+	std::cout << "Time difference = " 
+		<< std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - begin).count() 
+		<< "[탎]" 
+		<< std::endl;
+	begin = std::chrono::steady_clock::now();
+	SSELoop(count, results, dataA, dataB);
+	std::cout << "Time difference = " 
+		<< std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - begin).count()
+		<< "[탎]" 
+		<< std::endl;
+	//int c = 10240 * 10240;
+	int c = 2096 * 2096;
+	begin = std::chrono::steady_clock::now();
+	DotArrays_sse_transpose(c, results, dataA, dataB);
+	std::cout << "Time difference = "
+		<< std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - begin).count()
+		<< "[탎]"
+		<< std::endl;
+	begin = std::chrono::steady_clock::now();
+	DotArrays_ref(c, results, dataA, dataB);
+	std::cout << "Time difference = "
+		<< std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - begin).count()
+		<< "[탎]"
+		<< std::endl;
+	begin = std::chrono::steady_clock::now();
+	DotArrays_sse(c, results, dataA, dataB);
+	std::cout << "Time difference = "
+		<< std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - begin).count()
+		<< "[탎]"
+		<< std::endl;
 #pragma endregion
 
 }
