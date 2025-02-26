@@ -9,6 +9,7 @@
 #include "Concurrency/List.hpp"
 #include "SIMD/Simd.hpp"
 #include <chrono>
+#include "GPGPU/GPGPU.hpp"
 
 #undef max()
 #include <limits>
@@ -96,6 +97,12 @@ int main()
 		<< std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::steady_clock::now() - begin).count()
 		<< "[µs]"
 		<< std::endl;
+
+#pragma endregion
+#pragma region GPGPU
+
+
+
 #pragma endregion
 
 }

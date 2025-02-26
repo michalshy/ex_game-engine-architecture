@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="Concurrency\List.hpp" />
     <ClInclude Include="Concurrency\SpinLock.hpp" />
+    <ClInclude Include="GPGPU\GPGPU.hpp" />
     <ClInclude Include="SIMD\Simd.hpp" />
     <ClInclude Include="Test\Errors.hpp" />
     <ClInclude Include="Test\TypePunning.hpp" />

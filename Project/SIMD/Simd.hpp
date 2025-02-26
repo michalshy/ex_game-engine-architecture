@@ -2,6 +2,7 @@
 #define __SIMD_HPP__
 #include <xmmintrin.h>
 #include <cstdint>
+#include <cmath>
 
 #define _MM_TRANSPOSE4_PS(row0, row1, row2, row3) \
 { __m128 tmp3, tmp2, tmp1, tmp0; \
@@ -142,5 +143,84 @@ void DotArrays_sse_transpose(int count,
 		_mm_store_ps(&r[i], result);
 	}
 }
+
+/*
+* Multiply 4x4 matrix with 4 el vector
+*/
+union Mat44 {
+	float c[4][4];
+	__m128 row[4];
+};
+
+__m128 MulVecMat_sse(const __m128& v, const Mat44& M)
+{
+	//transpose v
+	__m128 vX = _mm_shuffle_ps(v, v, 0x00); // all elems vx
+	__m128 vY = _mm_shuffle_ps(v, v, 0x55); // all elems vy
+	__m128 vZ = _mm_shuffle_ps(v, v, 0xAA);	// all elems vz
+	__m128 vW = _mm_shuffle_ps(v, v, 0xFF); // all elems vw
+
+	__m128 r = _mm_mul_ps(vX, M.row[0]);
+	r = _mm_add_ps(r, _mm_mul_ps(vY, M.row[1]));
+	r = _mm_add_ps(r, _mm_mul_ps(vZ, M.row[2]));
+	r = _mm_add_ps(r, _mm_mul_ps(vW, M.row[3]));
+	return r;
+}
+
+void MulMatMat_sse(Mat44& R, const Mat44& A, const Mat44& B)
+{
+	R.row[0] = MulVecMat_sse(A.row[0], B);
+	R.row[1] = MulVecMat_sse(A.row[1], B);
+	R.row[2] = MulVecMat_sse(A.row[2], B);
+	R.row[3] = MulVecMat_sse(A.row[3], B);
+}
+
+/*
+* Vector Predication
+*/
+void SqrtArray_ref(float* __restrict r, const float* __restrict a, int count)
+{
+	for (unsigned i = 0; i < count; ++i)
+	{
+		if (a[i] >= 0.0f)
+			r[i] = sqrtf(a[i]);
+		else
+			r[i] = 0.0f;
+	}
+}
+
+void SqrtArray_sse_broken(float* __restrict r, const float* __restrict a, int count)
+{
+	assert(count % 4 == 0);
+	__m128 vz = _mm_set1_ps(0.0f);
+
+	for (int i = 0; i < count; i += 4)
+	{
+		__m128 va = _mm_load_ps(a + i);
+		// always do the quotient, but it may end
+		// up producing QNaN in some or all lanes
+		__m128 vq = _mm_sqrt_ps(va);
+		// now select between vq and vz, depending
+		// on whether the input was greater than
+		// or equal to zero or not
+		__m128 mask = _mm_cmpge_ps(va, vz);
+		// (vq & mask) | (vz & ~mask)
+		__m128 qmask = _mm_and_ps(mask, vq);
+		__m128 znotmask = _mm_andnot_ps(mask, vz);
+		__m128 vr = _mm_or_ps(qmask, znotmask);
+		_mm_store_ps(r + i, vr);
+	}
+}
+
+__m128 _mm_select_ps(const __m128 a,
+	const __m128 b,
+	const __m128 mask)
+{
+	// (b & mask) | (a & ~mask)
+	__m128 bmask = _mm_and_ps(mask, b);
+	__m128 anotmask = _mm_andnot_ps(mask, a);
+	return _mm_or_ps(bmask, anotmask);
+}
+
 
 #endif
